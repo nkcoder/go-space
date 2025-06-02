@@ -1,0 +1,219 @@
+{
+    "version": 3,
+    "checkpoint": {
+        "stack": "organization/create-readonly-user/dev",
+        "latest": {
+            "manifest": {
+                "time": "2025-05-22T16:13:06.683758+10:00",
+                "magic": "435b32a7cc09848104da7bb2b1a83b46b70a7e7e5eb3eeb3b0ee8f195d10a914",
+                "version": "v3.159.0"
+            },
+            "secrets_providers": {
+                "type": "passphrase",
+                "state": {
+                    "salt": "v1:78Fi+NxEkl4=:v1:47TRLbEkEpb0yuKK:l/D6cMVei2XiTHdQtJx1wg0y64ndRQ=="
+                }
+            },
+            "resources": [
+                {
+                    "urn": "urn:pulumi:dev::create-readonly-user::pulumi:pulumi:Stack::create-readonly-user-dev",
+                    "custom": false,
+                    "type": "pulumi:pulumi:Stack",
+                    "outputs": {
+                        "initialPassword": "8uStzS]WAKB0e3[c",
+                        "loginUrl": "https://360683066129.signin.aws.amazon.com/console",
+                        "passwordResetRequired": true,
+                        "readonlyGroupName": "readonly-group",
+                        "readonlyUserName": "alan.chalmers"
+                    },
+                    "created": "2025-05-21T11:10:53.255279Z",
+                    "modified": "2025-05-21T11:10:53.255279Z"
+                },
+                {
+                    "urn": "urn:pulumi:dev::create-readonly-user::pulumi:providers:aws::default_6_37_1",
+                    "custom": true,
+                    "id": "a5cda5fc-b50d-4c03-b30f-4f2bd3726e09",
+                    "type": "pulumi:providers:aws",
+                    "inputs": {
+                        "__internal": {},
+                        "region": "ap-southeast-2",
+                        "skipCredentialsValidation": "false",
+                        "skipRegionValidation": "true",
+                        "version": "6.37.1"
+                    },
+                    "outputs": {
+                        "region": "ap-southeast-2",
+                        "skipCredentialsValidation": "false",
+                        "skipRegionValidation": "true",
+                        "version": "6.37.1"
+                    },
+                    "created": "2025-05-21T11:10:53.255875Z",
+                    "modified": "2025-05-21T11:10:53.255875Z"
+                },
+                {
+                    "urn": "urn:pulumi:dev::create-readonly-user::aws:iam/user:User::readonly-user",
+                    "custom": true,
+                    "id": "alan.chalmers",
+                    "type": "aws:iam/user:User",
+                    "inputs": {
+                        "__defaults": [
+                            "forceDestroy"
+                        ],
+                        "forceDestroy": false,
+                        "name": "alan.chalmers",
+                        "path": "/"
+                    },
+                    "outputs": {
+                        "arn": "arn:aws:iam::360683066129:user/alan.chalmers",
+                        "forceDestroy": false,
+                        "id": "alan.chalmers",
+                        "name": "alan.chalmers",
+                        "path": "/",
+                        "permissionsBoundary": "",
+                        "tags": {},
+                        "tagsAll": {},
+                        "uniqueId": "AIDAVH6TC2MIVXT4WS2DJ"
+                    },
+                    "parent": "urn:pulumi:dev::create-readonly-user::pulumi:pulumi:Stack::create-readonly-user-dev",
+                    "provider": "urn:pulumi:dev::create-readonly-user::pulumi:providers:aws::default_6_37_1::a5cda5fc-b50d-4c03-b30f-4f2bd3726e09",
+                    "propertyDependencies": {
+                        "name": [],
+                        "path": []
+                    },
+                    "created": "2025-05-21T11:10:55.33147Z",
+                    "modified": "2025-05-21T11:10:55.33147Z"
+                },
+                {
+                    "urn": "urn:pulumi:dev::create-readonly-user::aws:iam/userLoginProfile:UserLoginProfile::readonly-user-login",
+                    "custom": true,
+                    "id": "alan.chalmers",
+                    "type": "aws:iam/userLoginProfile:UserLoginProfile",
+                    "inputs": {
+                        "__defaults": [],
+                        "passwordLength": 16,
+                        "passwordResetRequired": true,
+                        "pgpKey": "",
+                        "user": "alan.chalmers"
+                    },
+                    "outputs": {
+                        "id": "alan.chalmers",
+                        "password": "8uStzS]WAKB0e3[c",
+                        "passwordLength": 16,
+                        "passwordResetRequired": true,
+                        "user": "alan.chalmers"
+                    },
+                    "parent": "urn:pulumi:dev::create-readonly-user::pulumi:pulumi:Stack::create-readonly-user-dev",
+                    "dependencies": [
+                        "urn:pulumi:dev::create-readonly-user::aws:iam/user:User::readonly-user"
+                    ],
+                    "provider": "urn:pulumi:dev::create-readonly-user::pulumi:providers:aws::default_6_37_1::a5cda5fc-b50d-4c03-b30f-4f2bd3726e09",
+                    "propertyDependencies": {
+                        "passwordLength": [],
+                        "passwordResetRequired": [],
+                        "pgpKey": [],
+                        "user": [
+                            "urn:pulumi:dev::create-readonly-user::aws:iam/user:User::readonly-user"
+                        ]
+                    },
+                    "created": "2025-05-21T11:10:55.962497Z",
+                    "modified": "2025-05-21T11:10:55.962497Z"
+                },
+                {
+                    "urn": "urn:pulumi:dev::create-readonly-user::aws:iam/group:Group::readonly-group-ref",
+                    "custom": true,
+                    "id": "readonly-group",
+                    "type": "aws:iam/group:Group",
+                    "inputs": {
+                        "__defaults": [
+                            "path"
+                        ],
+                        "name": "readonly-group",
+                        "path": "/"
+                    },
+                    "outputs": {
+                        "arn": "arn:aws:iam::360683066129:group/readonly-group",
+                        "id": "readonly-group",
+                        "name": "readonly-group",
+                        "path": "/",
+                        "uniqueId": "AGPAVH6TC2MIXBI467P5N"
+                    },
+                    "parent": "urn:pulumi:dev::create-readonly-user::pulumi:pulumi:Stack::create-readonly-user-dev",
+                    "provider": "urn:pulumi:dev::create-readonly-user::pulumi:providers:aws::default_6_37_1::a5cda5fc-b50d-4c03-b30f-4f2bd3726e09",
+                    "propertyDependencies": {
+                        "name": []
+                    },
+                    "importID": "readonly-group",
+                    "created": "2025-05-21T21:36:25.661885Z",
+                    "modified": "2025-05-21T21:36:25.661885Z"
+                },
+                {
+                    "urn": "urn:pulumi:dev::create-readonly-user::aws:iam/groupMembership:GroupMembership::readonly-group-membership",
+                    "custom": true,
+                    "id": "readonly-group-membership-b374b49",
+                    "type": "aws:iam/groupMembership:GroupMembership",
+                    "inputs": {
+                        "__defaults": [
+                            "name"
+                        ],
+                        "group": "readonly-group",
+                        "name": "readonly-group-membership-b374b49",
+                        "users": [
+                            "alan.chalmers"
+                        ]
+                    },
+                    "outputs": {
+                        "group": "readonly-group",
+                        "id": "readonly-group-membership-b374b49",
+                        "name": "readonly-group-membership-b374b49",
+                        "users": [
+                            "alan.chalmers"
+                        ]
+                    },
+                    "parent": "urn:pulumi:dev::create-readonly-user::pulumi:pulumi:Stack::create-readonly-user-dev",
+                    "dependencies": [
+                        "urn:pulumi:dev::create-readonly-user::aws:iam/group:Group::readonly-group-ref",
+                        "urn:pulumi:dev::create-readonly-user::aws:iam/user:User::readonly-user"
+                    ],
+                    "provider": "urn:pulumi:dev::create-readonly-user::pulumi:providers:aws::default_6_37_1::a5cda5fc-b50d-4c03-b30f-4f2bd3726e09",
+                    "propertyDependencies": {
+                        "group": [
+                            "urn:pulumi:dev::create-readonly-user::aws:iam/group:Group::readonly-group-ref"
+                        ],
+                        "users": [
+                            "urn:pulumi:dev::create-readonly-user::aws:iam/user:User::readonly-user"
+                        ]
+                    },
+                    "created": "2025-05-21T11:10:55.986487Z",
+                    "modified": "2025-05-21T11:10:55.986487Z"
+                },
+                {
+                    "urn": "urn:pulumi:dev::create-readonly-user::aws:iam/group:Group::readonly-group",
+                    "custom": true,
+                    "id": "readonly-group",
+                    "type": "aws:iam/group:Group",
+                    "inputs": {
+                        "__defaults": [],
+                        "name": "readonly-group",
+                        "path": "/"
+                    },
+                    "outputs": {
+                        "arn": "arn:aws:iam::360683066129:group/readonly-group",
+                        "id": "readonly-group",
+                        "name": "readonly-group",
+                        "path": "/",
+                        "uniqueId": "AGPAVH6TC2MIXBI467P5N"
+                    },
+                    "parent": "urn:pulumi:dev::create-readonly-user::pulumi:pulumi:Stack::create-readonly-user-dev",
+                    "provider": "urn:pulumi:dev::create-readonly-user::pulumi:providers:aws::default_6_37_1::a5cda5fc-b50d-4c03-b30f-4f2bd3726e09",
+                    "propertyDependencies": {
+                        "name": [],
+                        "path": []
+                    },
+                    "created": "2025-05-21T11:10:55.411975Z",
+                    "modified": "2025-05-21T11:10:55.411975Z"
+                }
+            ],
+            "metadata": {}
+        }
+    }
+}

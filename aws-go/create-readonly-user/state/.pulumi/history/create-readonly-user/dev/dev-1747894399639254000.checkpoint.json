@@ -1,0 +1,20 @@
+{
+    "version": 3,
+    "checkpoint": {
+        "stack": "organization/create-readonly-user/dev",
+        "latest": {
+            "manifest": {
+                "time": "2025-05-22T16:13:19.633407+10:00",
+                "magic": "435b32a7cc09848104da7bb2b1a83b46b70a7e7e5eb3eeb3b0ee8f195d10a914",
+                "version": "v3.159.0"
+            },
+            "secrets_providers": {
+                "type": "passphrase",
+                "state": {
+                    "salt": "v1:78Fi+NxEkl4=:v1:47TRLbEkEpb0yuKK:l/D6cMVei2XiTHdQtJx1wg0y64ndRQ=="
+                }
+            },
+            "metadata": {}
+        }
+    }
+}
