@@ -6,7 +6,7 @@
 
 ## coral
 
-Process CSV input files, process, then send emails concurrently using AWS SES.
+Read CSV input files, process, then send emails concurrently using AWS SES.
 
 ## go-by-example
 
