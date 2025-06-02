@@ -1,0 +1,12 @@
+services:
+  app:
+    image: club-transfer-app:1.0.0
+    container_name: club-transfer-app
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_DEFAULT_REGION=ap-southeast-2
+    volumes:
+      - ./data:/app/data:ro
+    working_dir: /app
+    command: ['send-email', '-e', 'dev', '-t', 'PIF', '-i', '/app/data/pif_club_transfer.csv', '-s', 'no-reply@the-hub.ai']
