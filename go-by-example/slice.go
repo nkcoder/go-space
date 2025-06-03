@@ -55,7 +55,7 @@ func Slice() {
 		}
 	}
 
-	//
+	// test append
 	scores := []int{1, 2, 3}
 	appendScores(scores, 4, 5, 6)
 	fmt.Println(`scores after appendScores: `, scores) // [1 2 3], scores is unchanged
@@ -64,6 +64,6 @@ func Slice() {
 // functions operates on copies of arguments
 func appendScores(s []int, values ...int) {
 	fmt.Println("before append", s) // [1 2 3]
-	s = append(s, values...)
-	fmt.Println("after append", s) // [1 2 3 4 5 6]
+	s = append(s, values...)        // it depends if the underlying array has sufficient capacity
+	fmt.Println("after append", s)  // [1 2 3 4 5 6]
 }

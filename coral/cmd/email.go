@@ -65,7 +65,7 @@ func init() {
 	sendEmailCmd.Flags().StringVarP(&envFlag, "env", "e", "", "Environment (dev, staging, prod)")
 
 	sendEmailCmd.Flags().
-		StringVarP(&testEmailFlag, "test-email", "", "", "Test email address (if set, all emails go here instead of to clubs)")
+		StringVar(&testEmailFlag, "test-email", "", "Test email address (optional - if set, all emails go here instead of to clubs)")
 
 	sendEmailCmd.Flags().BoolVarP(&verboseFlag, "verbose", "v", false, "Enable verbose debugging output")
 }

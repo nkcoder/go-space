@@ -3,6 +3,7 @@ package service
 
 import (
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -111,6 +112,7 @@ func (s *Service) readClubTransferData(fileName string) (map[string][]model.Club
 
 // getOutputFileName generates the output file name based on payment type and club name
 func (s *Service) getOutputFileName(transferType, clubName string) string {
+	clubName = strings.ReplaceAll(clubName, " ", "_")
 	if transferType == "DD" {
 		return fmt.Sprintf("dd_club_transfer_%s.csv", clubName)
 	}

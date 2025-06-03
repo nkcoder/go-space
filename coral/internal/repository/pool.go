@@ -15,7 +15,7 @@ import (
 // DBConfig contains database connection configuration
 type DBConfig struct {
 	Host     string
-	Port     int
+	Port     string // it's configured as string "5432" in AWS Secrets Manager
 	Username string
 	Password string
 	DBName   string
@@ -39,7 +39,7 @@ func NewPool(cfg PoolConfig) (*Pool, error) {
 		return nil, fmt.Errorf("failed to load db config: %w", err)
 	}
 
-	connString := fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
+	connString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		config.Username, config.Password, config.Host, config.Port, config.DBName)
 
 	dbPool, err := pgxpool.New(context.Background(), connString)
@@ -51,7 +51,7 @@ func NewPool(cfg PoolConfig) (*Pool, error) {
 		return nil, fmt.Errorf("failed to ping database: %w", err)
 	}
 
-	logger.Info("Successfully connected to database at %s:%d/%s\n", config.Host, config.Port, config.DBName)
+	logger.Info("Successfully connected to database at %s:%s/%s\n", config.Host, config.Port, config.DBName)
 	return &Pool{pool: dbPool}, nil
 }
 

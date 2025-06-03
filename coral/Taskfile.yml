@@ -5,9 +5,9 @@ version: '3'
 vars:
   ENV: dev
   AWS_PROFILE: dev
-  TEST_EMAIL: daniel.guo@vivalabs.com.au
+  TEST_EMAIL: ""
   SENDER: no-reply@the-hub.ai
-  PIF_INPUT: data/pif_club_transfer.csv
+  PIF_INPUT: data/pif_club_transfer_template.csv
   DD_INPUT: data/dd_club_transfer.csv
 
 tasks:
@@ -108,7 +108,12 @@ tasks:
     cmds:
       - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}}) 
       - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}}) 
-      - docker-compose run --rm app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} --test-email {{.TEST_EMAIL}} -v
+      - |
+        if [ -n "{{.TEST_EMAIL}}" ]; then
+          docker-compose run --rm app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
+        else
+          docker-compose run --rm app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v
+        fi
 
   docker:send-email-dd:
     desc: Send DD emails using docker-compose
@@ -117,7 +122,12 @@ tasks:
     cmds:
       - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}}) 
       - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}}) 
-      - docker-compose run --rm app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} --test-email {{.TEST_EMAIL}} -v
+      - |
+        if [ -n "{{.TEST_EMAIL}}" ]; then
+          docker-compose run --rm app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
+        else
+          docker-compose run --rm app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v
+        fi
 
   # Install development tools
   install:tools:
@@ -131,7 +141,12 @@ tasks:
     deps:
       - build:mac
     cmds:
-      - ./email-app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} --test-email {{.TEST_EMAIL}} -v
+      - |
+        if [ -n "{{.TEST_EMAIL}}" ]; then
+          ./email-app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
+        else
+          ./email-app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v
+        fi
     silent: false
 
   send-email-dd:
@@ -139,7 +154,12 @@ tasks:
     deps:
       - build:mac
     cmds:
-      - ./email-app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} --test-email {{.TEST_EMAIL}} -v
+      - |
+        if [ -n "{{.TEST_EMAIL}}" ]; then
+          ./email-app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
+        else
+          ./email-app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v
+        fi
     silent: false
 
   help:
