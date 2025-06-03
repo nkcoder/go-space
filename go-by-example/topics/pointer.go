@@ -1,4 +1,4 @@
-package main
+package topics
 
 import "fmt"
 
@@ -7,7 +7,8 @@ func zeroval(ival int) {
 	ival = 2
 }
 
-// pass by reference: it will dereference the pointer from its memory address to the current value at that address
+// In go, it's always pass by value
+// We still have a copy of the argument, but it will dereference the pointer from its memory address to the current value at that address
 func zeroptr(iptr *int) {
 	*iptr = 3
 }
@@ -17,12 +18,12 @@ func Pointer() {
 	fmt.Println("initial: ", i)
 
 	zeroval(i)
-	fmt.Println("zeroval: ", i)
+	fmt.Println("zeroval: ", i) // 1
 
 	zeroptr(&i)
-	fmt.Println("zeroptr: ", i)
+	fmt.Println("zeroptr: ", i) // 3
 
 	// pointers can be printed too
-	fmt.Println("pointer: ", &i)
+	fmt.Println("pointer: ", &i) // 0xc0000140a0
 
 }
