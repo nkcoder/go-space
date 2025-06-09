@@ -1,10 +1,9 @@
 package main
 
-import "example/topics"
-
-// No additional imports needed since Hello and Values
-// are in the same package (main)
+import (
+	"example/topics"
+)
 
 func main() {
-	topics.Range()
+	topics.TestUUID()
 }

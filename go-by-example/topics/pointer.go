@@ -8,7 +8,8 @@ func zeroval(ival int) {
 }
 
 // In go, it's always pass by value
-// We still have a copy of the argument, but it will dereference the pointer from its memory address to the current value at that address
+// We still have a copy of the argument, but it points to the same memory address
+// so assigning to the dereferenced pointer will change the value at the referenced address
 func zeroptr(iptr *int) {
 	*iptr = 3
 }
