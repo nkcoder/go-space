@@ -24,3 +24,19 @@
   this directory can only be imported by code inside the parent of this directory
 - migration: SQL migration files
 - go.mod: declares project dependencies, versions and module path
+
+## Error handling
+
+- **Expected errors**: Errors that can occur during normal operation, such as a database query timeout, unavailable
+  network resources, or invalid user input. These are typically caused by factors outside your program's control. It is
+  best practice to return and handle these errors gracefully.
+- **Unexpected errors**: Errors that should not happen during normal operation, often due to developer mistakes or logic
+  errors in the codebase. These are exceptional cases where using `panic` is more acceptable. The Go standard library
+  often panics in such situations, for example, when accessing an out-of-bounds slice index or closing an already-closed
+  channel.
+
+## Run
+
+```sh
+air
+```

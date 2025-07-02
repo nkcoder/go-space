@@ -7,8 +7,24 @@ import (
 	"time"
 )
 
+// For decoding JSON from HTTP request body, json.Decoder is generally the best choice. It's more efficient than
+// json.Unmarshal, requires less code and offers some helpful settings to tweak its behavior.
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
-	_, _ = fmt.Fprintln(w, "Create a new movie")
+	var input struct {
+		Title   string   `json:"title"`
+		Year    int32    `json:"year"`
+		Runtime int32    `json:"runtime"`
+		Genres  []string `json:"genres"`
+	}
+
+	// Go's http.Server will close r.Body automatically
+	err := app.readJSON(w, r, &input)
+	if err != nil {
+		app.badRequestResponse(w, r, err)
+		return
+	}
+
+	_, _ = fmt.Fprintf(w, "%+v\n", input)
 }
 
 func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request) {
