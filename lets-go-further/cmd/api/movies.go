@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"greenlight.danielguo.com/internal/data"
+	"greenlight.danielguo.com/internal/validator"
 	"net/http"
 	"time"
 )
@@ -11,10 +11,10 @@ import (
 // json.Unmarshal, requires less code and offers some helpful settings to tweak its behavior.
 func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Title   string   `json:"title"`
-		Year    int32    `json:"year"`
-		Runtime int32    `json:"runtime"`
-		Genres  []string `json:"genres"`
+		Title   string       `json:"title"`
+		Year    int32        `json:"year"`
+		Runtime data.Runtime `json:"runtime"`
+		Genres  []string     `json:"genres"`
 	}
 
 	// Go's http.Server will close r.Body automatically
@@ -24,7 +24,24 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	_, _ = fmt.Fprintf(w, "%+v\n", input)
+	// Copy the values from input to Movie
+	movie := &data.Movie{
+		Title:   input.Title,
+		Year:    input.Year,
+		Runtime: input.Runtime,
+		Genres:  input.Genres,
+	}
+	// We might need to call multiple validation helpers
+	v := validator.New()
+	if movie.ValidateMovie(v); !v.Valid() {
+		app.failedValidationResponse(w, r, v.Errors)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"movie": input}, nil)
+	if err != nil {
+		app.serverErrorResponse(w, r, err)
+	}
 }
 
 func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request) {

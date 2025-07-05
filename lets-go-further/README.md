@@ -40,3 +40,37 @@
 ```sh
 air
 ```
+
+## Usage
+
+Create a movie:
+```sh
+❯ curl -d '{"title": "123", "runtime": "107 mins", "year": 201, "genres": []}' localhost:4000/v1/movies
+{
+  "movie": {
+    "title": "123",
+    "year": 201,
+    "runtime": 107,
+    "genres": []
+  }
+}
+```
+
+Get a movie:
+```shell
+❯ curl localhost:4000/v1/movies/2
+{
+  "movie": {
+    "id": 2,
+    "title": "Casablanca",
+    "runtime": 180,
+    "genres": [
+      "drama",
+      "romance",
+      "war"
+    ],
+    "version": 1
+  }
+}
+```
+
