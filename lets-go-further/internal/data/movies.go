@@ -1,6 +1,7 @@
 package data
 
 import (
+	"github.com/jackc/pgx/v5/pgxpool"
 	"greenlight.danielguo.com/internal/validator"
 	"time"
 )
@@ -37,4 +38,24 @@ func (movie *Movie) ValidateMovie(v *validator.Validator) {
 	v.Check(len(movie.Genres) >= 1, "genres", "must contain at least 1 genre")
 	v.Check(len(movie.Genres) <= 5, "genres", "must contain at most 5 genres")
 	v.Check(validator.Unique(movie.Genres), "genres", "must not contain any unique values")
+}
+
+type MovieModel struct {
+	DB *pgxpool.Pool
+}
+
+func (m MovieModel) Insert(movie *Movie) error {
+	return nil
+}
+
+func (m MovieModel) Get(id int64) (*Movie, error) {
+	return nil, nil
+}
+
+func (m MovieModel) Update(movie *Movie) error {
+	return nil
+}
+
+func (m MovieModel) Delete(id int64) error {
+	return nil
 }
