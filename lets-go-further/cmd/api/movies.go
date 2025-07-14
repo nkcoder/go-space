@@ -41,7 +41,7 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 
 	err = app.models.Movies.Insert(movie)
 	if err != nil {
-		app.logger.Println("insert movie error:", err)
+		app.logger.Info("insert movie", "error", err)
 		app.serverErrorResponse(w, r, err)
 		return
 	}
@@ -61,7 +61,7 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 
 	movie, err := app.models.Movies.Get(id)
 	if err != nil {
-		app.logger.Println("get movie from database error:", err)
+		app.logger.Info("get movie from database", "error", err)
 		if errors.Is(err, sql.ErrNoRows) {
 			http.NotFound(w, r)
 			return

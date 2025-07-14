@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"greenlight.danielguo.com/internal/data"
-	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"time"
@@ -22,7 +22,7 @@ type config struct {
 
 type application struct {
 	config config
-	logger *log.Logger
+	logger *slog.Logger
 	models *data.Models
 }
 
@@ -34,15 +34,15 @@ func main() {
 	flag.StringVar(&cfg.databaseUrl, "database-url", os.Getenv("DATABASE_URL"), "Database URL")
 	flag.Parse()
 
-	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 
-	dbpool, err := openDB(cfg)
+	dbpool, err := openDB(cfg, logger)
 	if err != nil {
-		logger.Fatal(err)
+		logger.Error("Failed to connect to database", "error", err)
 	}
 	defer dbpool.Close()
 
-	logger.Println("database connection poll established")
+	logger.Info("database connection poll established")
 
 	app := &application{
 		config: cfg,
@@ -58,12 +58,14 @@ func main() {
 		WriteTimeout: 30 * time.Second,
 	}
 
-	logger.Printf("Starting %s server on port %s", cfg.env, srv.Addr)
+	logger.Info("Starting server", "env", cfg.env, "addr", srv.Addr)
 	err = srv.ListenAndServe()
-	logger.Fatal(err)
+	if err != nil {
+		logger.Error("Failed to start server", "error", err)
+	}
 }
 
-func openDB(cfg config) (*pgxpool.Pool, error) {
+func openDB(cfg config, logger *slog.Logger) (*pgxpool.Pool, error) {
 	dbPool, err := pgxpool.New(context.Background(), cfg.databaseUrl)
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Unable to connect to database: %v\n", err)
@@ -74,6 +76,6 @@ func openDB(cfg config) (*pgxpool.Pool, error) {
 	if err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Unable to query current user: %v\n", err)
 	}
-	log.Println("Connected to database, current user is:", currentUser)
+	slog.Info("Connected to database", "current_user", currentUser)
 	return dbPool, nil
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func (app *application) logError(r *http.Request, err error) {
-	app.logger.Println(err)
+	app.logger.Error("application error", "error", err, "url", r.URL.String())
 }
 
 // Generic helper for sending JSON-formatted error messages with a given status code
