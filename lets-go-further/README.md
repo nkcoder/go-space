@@ -45,7 +45,7 @@ air
 
 Create a movie:
 ```sh
-❯ curl -d '{"title": "123", "runtime": "107 mins", "year": 201, "genres": []}' localhost:4000/v1/movies
+curl -d '{"title": "123", "runtime": "107 mins", "year": 201, "genres": []}' localhost:4000/v1/movies
 {
   "movie": {
     "title": "123",
@@ -58,7 +58,7 @@ Create a movie:
 
 Get a movie:
 ```shell
-❯ curl localhost:4000/v1/movies/2
+curl localhost:4000/v1/movies/2
 {
   "movie": {
     "id": 2,
@@ -73,4 +73,8 @@ Get a movie:
   }
 }
 ```
+
+## Database
+
+postgres://greenlight:Password@2025@localhost/greenlight
 

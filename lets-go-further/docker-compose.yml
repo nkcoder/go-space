@@ -1,0 +1,14 @@
+services:
+  go-db:
+    image: postgres:17.5-alpine
+    environment:
+      POSTGRES_USER: greenlight
+      POSTGRES_PASSWORD: Password@2025
+      POSTGRES_DB: greenlight
+    ports:
+      - "54322:5432"
+    volumes:
+      - greenlight_db:/var/lib/postgresql/data
+
+volumes:
+  greenlight_db:
