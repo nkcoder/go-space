@@ -1,10 +1,11 @@
 package main
 
 import (
+	"database/sql"
+	"errors"
 	"greenlight.danielguo.com/internal/data"
 	"greenlight.danielguo.com/internal/validator"
 	"net/http"
-	"time"
 )
 
 // For decoding JSON from HTTP request body, json.Decoder is generally the best choice. It's more efficient than
@@ -38,7 +39,14 @@ func (app *application) createMovieHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	err = app.writeJSON(w, http.StatusCreated, envelope{"movie": input}, nil)
+	err = app.models.Movies.Insert(movie)
+	if err != nil {
+		app.logger.Println("insert movie error:", err)
+		app.serverErrorResponse(w, r, err)
+		return
+	}
+
+	err = app.writeJSON(w, http.StatusCreated, envelope{"data": movie}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}
@@ -51,15 +59,18 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	movie := data.Movie{
-		ID:        id,
-		CreatedAt: time.Now(),
-		Title:     "Casablanca",
-		Runtime:   180,
-		Genres:    []string{"drama", "romance", "war"},
-		Version:   1,
+	movie, err := app.models.Movies.Get(id)
+	if err != nil {
+		app.logger.Println("get movie from database error:", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			http.NotFound(w, r)
+			return
+		}
+		app.serverErrorResponse(w, r, err)
+		return
 	}
-	err = app.writeJSON(w, http.StatusOK, envelope{"movie": movie}, nil)
+
+	err = app.writeJSON(w, http.StatusOK, envelope{"data": movie}, nil)
 	if err != nil {
 		app.serverErrorResponse(w, r, err)
 	}

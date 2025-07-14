@@ -14,7 +14,7 @@ type Runtime int32
 // If yes, then Go will call its MarshalJSON() method and use the []byte slice that it returns as the encoded JSON value.
 // If no, then Go will fall back to trying to encode it to JSON based on its own internal set of rules.
 func (r *Runtime) MarshalJSON() ([]byte, error) {
-	jsonValue := fmt.Sprintf("%d mins", r)
+	jsonValue := fmt.Sprintf("%d mins", *r)
 
 	// It needs to be surrounded by double quotes in order bo be a valid JSON string
 	quotedJsonValue := strconv.Quote(jsonValue)
