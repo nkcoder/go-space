@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"errors"
 	"greenlight.danielguo.com/internal/data"
 	"greenlight.danielguo.com/internal/validator"
@@ -62,11 +61,14 @@ func (app *application) showMovieHandler(w http.ResponseWriter, r *http.Request)
 	movie, err := app.models.Movies.Get(id)
 	if err != nil {
 		app.logger.Info("get movie from database", "error", err)
-		if errors.Is(err, sql.ErrNoRows) {
-			http.NotFound(w, r)
-			return
+		switch {
+		case errors.Is(err, data.ErrRecordNotFound):
+			app.notFoundResponse(w, r)
+		default:
+			app.serverErrorResponse(w, r, err)
+
 		}
-		app.serverErrorResponse(w, r, err)
+		
 		return
 	}
 

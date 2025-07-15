@@ -2,7 +2,7 @@
 
 Create migration files:
 ```shell
-export DATABASE_URL="postgres://greenlight:Password@2025@localhost:54322/greenlight?sshmode=disable"
+export DATABASE_URL="postgres://greenlight:Password@2025@localhost:54322/greenlight?sslmode=disable"
 ```
 
 Migrate:

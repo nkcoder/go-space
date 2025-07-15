@@ -2,6 +2,9 @@ package data
 
 import (
 	"context"
+	"database/sql"
+	"errors"
+	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"greenlight.danielguo.com/internal/validator"
 	"time"
@@ -54,7 +57,12 @@ func (m MovieModel) Insert(movie *Movie) error {
 	return m.DB.QueryRow(context.Background(), query, args...).Scan(&movie.ID, &movie.CreatedAt, &movie.Version)
 }
 
+var ErrRecordNotFound = fmt.Errorf("movie not found")
+
 func (m MovieModel) Get(id int64) (*Movie, error) {
+	if id < 1 {
+		return nil, ErrRecordNotFound
+	}
 	query := `
 		SELECT id, created_at, title, year, runtime, genres, version
 		FROM movies
@@ -62,7 +70,15 @@ func (m MovieModel) Get(id int64) (*Movie, error) {
 	result := &Movie{}
 	err := m.DB.QueryRow(context.Background(), query, id).Scan(&result.ID, &result.CreatedAt, &result.Title,
 		&result.Year, &result.Runtime, &result.Genres, &result.Version)
-	println("result:", result.Runtime)
+	if err != nil {
+		switch {
+		case errors.Is(err, sql.ErrNoRows):
+			return nil, ErrRecordNotFound
+		default:
+			return nil, err
+		}
+	}
+
 	return result, err
 }
 
