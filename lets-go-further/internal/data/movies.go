@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"greenlight.danielguo.com/internal/validator"
 	"time"
@@ -56,8 +55,6 @@ func (m MovieModel) Insert(movie *Movie) error {
 	args := []any{movie.Title, movie.Year, movie.Runtime, movie.Genres}
 	return m.DB.QueryRow(context.Background(), query, args...).Scan(&movie.ID, &movie.CreatedAt, &movie.Version)
 }
-
-var ErrRecordNotFound = fmt.Errorf("movie not found")
 
 func (m MovieModel) Get(id int64) (*Movie, error) {
 	if id < 1 {
