@@ -21,6 +21,8 @@ func (app *application) routes() chi.Router {
 	r.Get("/v1/healthcheck", app.healthcheckHandler)
 	r.Post("/v1/movies", app.createMovieHandler)
 	r.Get("/v1/movies/{id}", app.showMovieHandler)
+	r.Put("/v1/movies/{id}", app.updateMovieHandler)
+	r.Delete("/v1/movies/{id}", app.deleteMovieHandler)
 
 	return r
 }
