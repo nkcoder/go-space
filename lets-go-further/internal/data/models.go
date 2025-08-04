@@ -1,11 +1,15 @@
 package data
 
 import (
-	"fmt"
+	"errors"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-var ErrRecordNotFound = fmt.Errorf("movie not found")
+var (
+	ErrRecordNotFound = errors.New("movie not found")
+	ErrEditConflict = errors.New("edit conflict")
+)
 
 type Models struct {
 	Movies MovieModel

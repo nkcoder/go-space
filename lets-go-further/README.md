@@ -1,3 +1,5 @@
+> next: Advaned CRUD Operations => Managing SQL Query Timeouts
+
 ## Notes
 
 - When there is a valid `go.mod` file in the root of your project directory, your project is a module.
@@ -5,7 +7,7 @@
 ## Project structure
 
 ```
-- bin 
+- bin
 - cmd
   - api
     - main.go
@@ -35,10 +37,11 @@
   often panics in such situations, for example, when accessing an out-of-bounds slice index or closing an already-closed
   channel.
 
-## Run
+## Format & Run
 
 ```sh
-air
+auto/format
+auto/run
 ```
 
 ## Usage
@@ -76,5 +79,4 @@ curl localhost:4000/v1/movies/2
 
 ## Database
 
-postgres://greenlight:Password@2025@localhost/greenlight
-
+postgres://greenlight:Password@2025@localhost:54322/greenlight

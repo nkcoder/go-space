@@ -4,9 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"time"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 	"greenlight.danielguo.com/internal/validator"
-	"time"
 )
 
 // Movie The fields are exported which is necessary for them to be visible to `encoding/json` package.
@@ -83,11 +84,20 @@ func (m MovieModel) Update(movie *Movie) error {
 	query := `
 		UPDATE movies
 		SET title = $1, year = $2, runtime = $3, genres = $4, version = version + 1
-		WHERE id = $5
+		WHERE id = $5 AND version = $6
 		RETURNING version`
 
-	args := []any{movie.Title, movie.Year, movie.Runtime, movie.Genres, movie.ID}
-	return m.DB.QueryRow(context.Background(), query, args...).Scan(&movie.Version)
+	args := []any{movie.Title, movie.Year, movie.Runtime, movie.Genres, movie.ID, movie.Version}
+
+	if err := m.DB.QueryRow(context.Background(), query, args...).Scan(&movie.Version); err != nil {
+		switch {
+			case errors.Is(err, sql.ErrNoRows):
+				return ErrEditConflict
+			default:
+				return err
+		}
+	}
+	return nil
 }
 
 func (m MovieModel) Delete(id int64) error {

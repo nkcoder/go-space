@@ -94,9 +94,9 @@ func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	var input struct {
-		Title   string       `json:"title"`
-		Year    int32        `json:"year"`
-		Runtime data.Runtime `json:"runtime"`
+		Title   *string       `json:"title"`
+		Year    *int32        `json:"year"`
+		Runtime *data.Runtime `json:"runtime"`
 		Genres  []string     `json:"genres"`
 	}
 	if err = app.readJSON(w, r, &input); err != nil {
@@ -104,10 +104,21 @@ func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	movie.Title = input.Title
-	movie.Year = input.Year
-	movie.Runtime = input.Runtime
-	movie.Genres = input.Genres
+	if input.Title != nil {
+		movie.Title = *input.Title
+	}
+
+	if input.Year != nil {
+		movie.Year = *input.Year
+	}
+
+	if input.Runtime != nil {
+		movie.Runtime = *input.Runtime
+	}
+
+	if input.Genres != nil {
+		movie.Genres = input.Genres
+	}
 
 	v := validator.New()
 	if movie.ValidateMovie(v); !v.Valid() {
@@ -116,8 +127,13 @@ func (app *application) updateMovieHandler(w http.ResponseWriter, r *http.Reques
 	}
 
 	if err := app.models.Movies.Update(movie); err != nil {
-		app.logger.Error("update movie", "error", err)
-		app.serverErrorResponse(w, r, err)
+		switch {
+			case errors.Is(err, data.ErrEditConflict):
+				message := "unable to update the record due to an edit conflict, please try again"
+				app.errorResponse(w, r, http.StatusConflict, message)
+			default:
+				app.serverErrorResponse(w, r, err)
+		}
 		return
 	}
 
