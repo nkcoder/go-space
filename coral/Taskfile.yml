@@ -3,11 +3,11 @@
 version: '3'
 
 vars:
-  ENV: dev
-  AWS_PROFILE: dev
+  ENV: prod
+  AWS_PROFILE: prod
   TEST_EMAIL: ""
   SENDER: no-reply@the-hub.ai
-  PIF_INPUT: data/pif_club_transfer_template.csv
+  PIF_INPUT: data/pif_club_transfer.csv
   DD_INPUT: data/dd_club_transfer.csv
 
 tasks:
@@ -106,8 +106,8 @@ tasks:
     deps:
       - docker:build
     cmds:
-      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}}) 
-      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}}) 
+      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}})
+      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}})
       - |
         if [ -n "{{.TEST_EMAIL}}" ]; then
           docker-compose run --rm app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
@@ -120,8 +120,8 @@ tasks:
     deps:
       - docker:build
     cmds:
-      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}}) 
-      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}}) 
+      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}})
+      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}})
       - |
         if [ -n "{{.TEST_EMAIL}}" ]; then
           docker-compose run --rm app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
