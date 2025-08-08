@@ -27,7 +27,7 @@ type Service struct {
 func NewService(cfg *config.AppConfig) *Service {
 	return &Service{
 		config:         cfg,
-		secretsManager: secrets.NewManager(cfg.Secrets),
+		secretsManager: secrets.NewManager(cfg.Secrets, nil, nil),
 		emailSender:    email.NewSender(cfg.Email),
 	}
 }

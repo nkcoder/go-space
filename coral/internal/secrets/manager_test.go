@@ -80,7 +80,7 @@ func TestNewManager(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			manager := NewManager(tt.config)
+			manager := NewManagerWithDefaults(tt.config)
 
 			// Verify manager is not nil
 			if manager == nil {
@@ -98,7 +98,7 @@ func TestNewManager(t *testing.T) {
 func TestNewManager_WithDefaultConfig(t *testing.T) {
 	// Test using DefaultConfig
 	defaultConfig := DefaultConfig()
-	manager := NewManager(defaultConfig)
+	manager := NewManagerWithDefaults(defaultConfig)
 
 	if manager == nil {
 		t.Fatal("NewManager returned nil")
@@ -112,7 +112,7 @@ func TestNewManager_WithDefaultConfig(t *testing.T) {
 func TestManager_StructFields(t *testing.T) {
 	// Test that Manager struct fields are accessible
 	config := Config{Region: "test-region"}
-	manager := NewManager(config)
+	manager := NewManagerWithDefaults(config)
 
 	// Verify field types and accessibility
 	var _ = manager.config
@@ -143,7 +143,7 @@ func BenchmarkNewManager(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		NewManager(config)
+		NewManagerWithDefaults(config)
 	}
 }
 
@@ -203,7 +203,7 @@ func TestNewTestableManager(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			manager := NewTestableManager(config, tt.sessionCreator, tt.clientFactory)
+			manager := NewManager(config, tt.sessionCreator, tt.clientFactory)
 
 			if manager == nil {
 				t.Fatal("NewTestableManager returned nil")
@@ -226,7 +226,7 @@ func TestNewTestableManager(t *testing.T) {
 
 func TestNewTestableManagerWithDefaults(t *testing.T) {
 	config := Config{Region: "ap-southeast-2"}
-	manager := NewTestableManagerWithDefaults(config)
+	manager := NewManagerWithDefaults(config)
 
 	if manager == nil {
 		t.Fatal("NewTestableManagerWithDefaults returned nil")
@@ -304,7 +304,7 @@ func TestTestableManager_GetSecret(t *testing.T) {
 			}
 
 			config := Config{Region: "us-east-1"}
-			manager := NewTestableManager(config, nil, clientFactory)
+			manager := NewManager(config, nil, clientFactory)
 
 			result, err := manager.GetSecret(tt.secretName)
 
@@ -350,6 +350,6 @@ func BenchmarkNewTestableManager(b *testing.B) {
 	b.ResetTimer()
 
 	for i := 0; i < b.N; i++ {
-		NewTestableManager(config, nil, nil)
+		NewManager(config, nil, nil)
 	}
 }

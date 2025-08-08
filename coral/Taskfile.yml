@@ -5,9 +5,9 @@ version: '3'
 vars:
   ENV: dev
   AWS_PROFILE: dev
-  TEST_EMAIL: ""
+  TEST_EMAIL: "nkcoder.24@proton.me"
   SENDER: no-reply@the-hub.ai
-  PIF_INPUT: data/pif_club_transfer_template.csv
+  PIF_INPUT: data/pif_club_transfer.csv
   DD_INPUT: data/dd_club_transfer.csv
 
 tasks:

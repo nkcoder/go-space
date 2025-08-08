@@ -1,4 +1,3 @@
-// Package secrets provides access to secure configuration values
 package secrets
 
 import (
@@ -6,48 +5,48 @@ import (
 
 	"coral.daniel-guo.com/internal/logger"
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 )
 
-// Config contains AWS Secrets Manager configuration
-type Config struct {
-	Region string
-}
 
-// DefaultConfig returns a default secrets configuration
-func DefaultConfig() Config {
-	return Config{
-		Region: "ap-southeast-2",
+func NewManager(
+	config Config,
+	sessionCreator SessionCreator,
+	clientFactory func(*aws.Config) SecretsManagerAPI,
+) *Manager {
+	if sessionCreator == nil {
+		sessionCreator = &DefaultSessionCreator{}
 	}
-}
+	if clientFactory == nil {
+		clientFactory = func(cfg *aws.Config) SecretsManagerAPI {
+			sess, _ := sessionCreator.NewSession(cfg)
+			return secretsmanager.New(sess)
+		}
+	}
 
-// Manager handles retrieving secrets from AWS Secrets Manager
-type Manager struct {
-	config Config
-}
-
-// NewManager creates a new secrets manager with the given configuration
-func NewManager(config Config) *Manager {
 	return &Manager{
-		config: config,
+		config:         config,
+		sessionCreator: sessionCreator,
+		clientFactory:  clientFactory,
 	}
 }
 
-// GetSecret gets a secret from AWS Secrets Manager
+// NewManagerWithDefaults creates a testable manager with default dependencies
+func NewManagerWithDefaults(config Config) *Manager {
+	return NewManager(config, nil, nil)
+}
+
+// GetSecret gets a secret from AWS Secrets Manager using the injected dependencies
 func (m *Manager) GetSecret(secretName string) (string, error) {
 	logger.Info("Getting secret: %s", secretName)
 
-	// Create a new AWS session with the configuration
-	sess, err := session.NewSession(&aws.Config{
+	// Create AWS config
+	awsConfig := &aws.Config{
 		Region: aws.String(m.config.Region),
-	})
-	if err != nil {
-		return "", fmt.Errorf("failed to create session: %w", err)
 	}
 
-	// Create a new Secrets Manager client
-	svc := secretsmanager.New(sess)
+	// Create client using the factory
+	client := m.clientFactory(awsConfig)
 
 	// Create a request to get the secret value
 	input := &secretsmanager.GetSecretValueInput{
@@ -55,7 +54,7 @@ func (m *Manager) GetSecret(secretName string) (string, error) {
 	}
 
 	// Get the secret value
-	result, err := svc.GetSecretValue(input)
+	result, err := client.GetSecretValue(input)
 	if err != nil {
 		return "", fmt.Errorf("failed to get secret: %w", err)
 	}

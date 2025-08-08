@@ -25,3 +25,22 @@ type DefaultSessionCreator struct{}
 func (d *DefaultSessionCreator) NewSession(config *aws.Config) (*session.Session, error) {
 	return session.NewSession(config)
 }
+
+// Config contains AWS Secrets Manager configuration
+type Config struct {
+	Region string
+}
+
+// DefaultConfig returns a default secrets configuration
+func DefaultConfig() Config {
+	return Config{
+		Region: "ap-southeast-2",
+	}
+}
+
+// Manager is a version of Manager that accepts dependencies for easier testing
+type Manager struct {
+	config         Config
+	sessionCreator SessionCreator
+	clientFactory  func(*aws.Config) SecretsManagerAPI
+}
