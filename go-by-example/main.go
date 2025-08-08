@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.Enum()
+	topics.Generics()
 }

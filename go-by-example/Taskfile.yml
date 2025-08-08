@@ -12,9 +12,9 @@ tasks:
     silent: true
   format:
     cmds:
-      - gofmt .
+      - gofmt -s -w .
     silent: true
-  main:
+  run:
     cmds:
       - go run .
     silent: true
