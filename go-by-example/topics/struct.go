@@ -31,7 +31,6 @@ func (r rect) perimeter() int {
 }
 
 func Struct() {
-
 	// create a new struct
 	fmt.Println(person{"Bob", 20})
 

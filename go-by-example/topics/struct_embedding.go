@@ -32,6 +32,7 @@ func StructEmbedding() {
 	type describer interface {
 		describe() string
 	}
+	// the container now implements the describer interface because it has the describe method
 	var d describer = con
 	fmt.Println("d.describe: ", d.describe())
 }

@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.TestUUID()
+	topics.Enum()
 }

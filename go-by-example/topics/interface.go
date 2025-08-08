@@ -5,6 +5,7 @@ import (
 	"math"
 )
 
+// interface is a named collection of method signatures
 type geometry interface {
 	area() float64
 	perimeter() float64
