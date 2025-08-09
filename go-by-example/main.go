@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.GoroutineMain()
+	topics.ChannelMain()
 }
