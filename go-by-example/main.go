@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.Generics()
+	topics.ErrorMain()
 }
