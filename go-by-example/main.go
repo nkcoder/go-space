@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.ErrorMain()
+	topics.GoroutineMain()
 }
