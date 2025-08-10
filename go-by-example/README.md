@@ -6,9 +6,8 @@ go run .
 
 Or use go task:
 
-```shell
-task main
+```sh
+task run
 ```
 
-
-> Next: generic
+> Next: Timers
