@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.ChannelMain()
+	topics.TickerMain()
 }
