@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.TickerMain()
+	topics.WorkerPoolMain()
 }
