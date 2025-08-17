@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -23,6 +24,60 @@ func NewAPIClient(docAPIKey, pmAPIKey string) *APIClient {
 		docAPIKey: docAPIKey,
 		pmAPIKey:  pmAPIKey,
 	}
+}
+
+type ModuleProcessor interface {
+	ProcessModule(moduleName, collectionName, workspaceID string) error
+}
+
+type ModuleConfig struct {
+	Modules map[string]string
+}
+
+func NewModuleConfig() *ModuleConfig {
+	return &ModuleConfig{
+		Modules: map[string]string{
+			"members": "Members Module API",
+			"brands":  "Brands Module API",
+			"classes": "Classes Module API",
+		},
+	}
+}
+
+type SyncOrchestrator struct {
+	processor ModuleProcessor
+	config    *ModuleConfig
+}
+
+func NewSyncOrchestrator(processoor ModuleProcessor, config *ModuleConfig) *SyncOrchestrator {
+	return &SyncOrchestrator{
+		processor: processoor,
+		config:    config,
+	}
+}
+
+func (s *SyncOrchestrator) SyncAllModules(workspaceID string) error {
+	var wg sync.WaitGroup
+	errChan := make(chan error, len(s.config.Modules))
+
+	for mod, col := range s.config.Modules {
+		wg.Go(func() {
+			if err := s.processor.ProcessModule(mod, col, workspaceID); err != nil {
+				errChan <- err
+			}
+		})
+	}
+
+	wg.Wait()
+	close(errChan)
+
+	for err := range errChan {
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (c *APIClient) fetchDoc(url string) (string, error) {
@@ -169,7 +224,7 @@ func (c *APIClient) importToPostman(openAPIData, collectionName, workspaceID str
 	return nil
 }
 
-func (c *APIClient) FetchModuleDocAndImportToPostman(moduleName, collectionName, workspaceID string) {
+func (c *APIClient) ProcessModule(moduleName, collectionName, workspaceID string) error {
 	fmt.Println("processing module", moduleName)
 
 	apiURL := fmt.Sprintf("https://api.%s.vivalabs-dev.link/v1/internal-docs", moduleName)
@@ -177,14 +232,14 @@ func (c *APIClient) FetchModuleDocAndImportToPostman(moduleName, collectionName,
 	data, err := c.fetchDoc(apiURL)
 	if err != nil {
 		fmt.Println("fetch doc error", err)
-		return
+		return err
 	}
 
 	// Check if collection already exists and delete all instances
 	existingIds, err := c.getCollectionsByName(collectionName, workspaceID)
 	if err != nil {
 		fmt.Printf("Error checking existing collections: %v\n", err)
-		return
+		return err
 	}
 
 	for _, id := range existingIds {
@@ -199,8 +254,9 @@ func (c *APIClient) FetchModuleDocAndImportToPostman(moduleName, collectionName,
 	err = c.importToPostman(data, collectionName, workspaceID)
 	if err != nil {
 		fmt.Printf("Postman import error: %v\n", err)
-		return
+		return err
 	}
 
 	fmt.Println("processed module", moduleName)
+	return nil
 }

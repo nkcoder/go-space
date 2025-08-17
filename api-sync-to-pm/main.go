@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"os"
-	"sync"
 
 	"apisync.daniel.guo.com/cmd"
 )
@@ -16,22 +15,12 @@ func main() {
 	}
 
 	client := cmd.NewAPIClient(params.DocAPIKey, params.PostmanAPIKey)
+	config := cmd.NewModuleConfig()
+	orchestrator := cmd.NewSyncOrchestrator(client, config)
 
-	modules := map[string]string{
-		"members": "Members Module API",
-		"brands":  "Brands Module API",
-		"classes": "Classes Module API",
+	if err := orchestrator.SyncAllModules(params.PostmanWorkspaceID); err != nil {
+		fmt.Fprintf(os.Stderr, "Sync error: %v\n", err)
 	}
-
-	var waitGroup sync.WaitGroup
-
-	for mod, col := range modules {
-		waitGroup.Go(func() {
-			client.FetchModuleDocAndImportToPostman(mod, col, params.PostmanWorkspaceID)
-		})
-	}
-
-	waitGroup.Wait()
 
 	fmt.Println("Successfully imported to Postman!")
 }
