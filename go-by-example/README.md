@@ -10,4 +10,4 @@ Or use go task:
 task run
 ```
 
-> Next: Timers
+> Next: Rate Limiting
