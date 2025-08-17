@@ -11,16 +11,7 @@ db-data
 */coverage*
 
 
-## coral
-email-app*
+## References
+references/*
 
-## go-concurrency
-
-# go-microservices
-go-microservices
-
-# let's go further
-
-*/tmp
-
-yappr/
+coral/email-app
