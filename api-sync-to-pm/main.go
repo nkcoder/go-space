@@ -15,6 +15,8 @@ func main() {
 		os.Exit(1)
 	}
 
+	client := cmd.NewAPIClient(params.DocAPIKey, params.PostmanAPIKey)
+
 	modules := map[string]string{
 		"members": "Members Module API",
 		"brands":  "Brands Module API",
@@ -23,9 +25,9 @@ func main() {
 
 	var waitGroup sync.WaitGroup
 
-	for moduleName, collectionName := range modules {
+	for mod, col := range modules {
 		waitGroup.Go(func() {
-			cmd.FetchModuleDocAndImportToPostman(moduleName, collectionName, params)
+			client.FetchModuleDocAndImportToPostman(mod, col, params.PostmanWorkspaceID)
 		})
 	}
 

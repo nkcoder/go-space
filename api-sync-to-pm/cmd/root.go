@@ -9,19 +9,31 @@ import (
 	"time"
 )
 
-func fetchDoc(url string, apiKey string) (string, error) {
-	client := &http.Client{
-		Timeout: 10 * time.Second,
-	}
+type APIClient struct {
+	httpClient *http.Client
+	docAPIKey  string
+	pmAPIKey   string
+}
 
+func NewAPIClient(docAPIKey, pmAPIKey string) *APIClient {
+	return &APIClient{
+		httpClient: &http.Client{
+			Timeout: 30 * time.Second,
+		},
+		docAPIKey: docAPIKey,
+		pmAPIKey:  pmAPIKey,
+	}
+}
+
+func (c *APIClient) fetchDoc(url string) (string, error) {
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return "", fmt.Errorf("creating request: %w", err)
 	}
 
-	req.Header.Set("X-API-Key", apiKey)
+	req.Header.Set("X-API-Key", c.docAPIKey)
 
-	resp, err := client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("making request: %w", err)
 	}
@@ -30,7 +42,7 @@ func fetchDoc(url string, apiKey string) (string, error) {
 
 	if resp.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(resp.Body)
-		return "", fmt.Errorf("unexptected status: %d, body: %s", resp.StatusCode, string(body))
+		return "", fmt.Errorf("unexpected status: %d, body: %s", resp.StatusCode, string(body))
 	}
 
 	var data any
@@ -44,18 +56,16 @@ func fetchDoc(url string, apiKey string) (string, error) {
 	return string(prettyJSON), nil
 }
 
-func getCollectionsByName(name, apiKey, workspaceID string) ([]string, error) {
-	client := &http.Client{Timeout: 10 * time.Second}
-
+func (c *APIClient) getCollectionsByName(name, workspaceID string) ([]string, error) {
 	url := fmt.Sprintf("https://api.getpostman.com/collections?workspace=%s", workspaceID)
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("creating request: %w", err)
 	}
 
-	req.Header.Set("X-API-Key", apiKey)
+	req.Header.Set("X-API-Key", c.pmAPIKey)
 
-	resp, err := client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return nil, fmt.Errorf("making request: %w", err)
 	}
@@ -80,8 +90,17 @@ func getCollectionsByName(name, apiKey, workspaceID string) ([]string, error) {
 
 	var ids []string
 	for _, col := range collections {
-		collection := col.(map[string]interface{})
-		if collection["name"].(string) == name {
+		collection, ok := col.(map[string]any)
+		if !ok {
+			continue
+		}
+
+		cname, ok := collection["name"].(string)
+		if !ok {
+			continue
+		}
+
+		if cname == name {
 			ids = append(ids, collection["id"].(string))
 		}
 	}
@@ -89,18 +108,16 @@ func getCollectionsByName(name, apiKey, workspaceID string) ([]string, error) {
 	return ids, nil
 }
 
-func deleteCollection(collectionID string, apiKey string) error {
-	client := &http.Client{Timeout: 10 * time.Second}
-
+func (c *APIClient) deleteCollection(collectionID string) error {
 	url := fmt.Sprintf("https://api.getpostman.com/collections/%s", collectionID)
 	req, err := http.NewRequest("DELETE", url, nil)
 	if err != nil {
 		return fmt.Errorf("creating request: %w", err)
 	}
 
-	req.Header.Set("X-API-Key", apiKey)
+	req.Header.Set("X-API-Key", c.pmAPIKey)
 
-	resp, err := client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("making request: %w", err)
 	}
@@ -117,11 +134,7 @@ func deleteCollection(collectionID string, apiKey string) error {
 	return nil
 }
 
-func importToPostman(openAPIData, collectionName, apiKey, workspaceID string) error {
-	client := &http.Client{
-		Timeout: 30 * time.Second,
-	}
-
+func (c *APIClient) importToPostman(openAPIData, collectionName, workspaceID string) error {
 	payload := map[string]any{
 		"type":  "string",
 		"input": openAPIData,
@@ -139,9 +152,9 @@ func importToPostman(openAPIData, collectionName, apiKey, workspaceID string) er
 	}
 
 	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("X-API-Key", apiKey)
+	req.Header.Set("X-API-Key", c.pmAPIKey)
 
-	resp, err := client.Do(req)
+	resp, err := c.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("making request: %w", err)
 	}
@@ -156,21 +169,19 @@ func importToPostman(openAPIData, collectionName, apiKey, workspaceID string) er
 	return nil
 }
 
-func FetchModuleDocAndImportToPostman(moduleName, collectionName string, params Params) {
+func (c *APIClient) FetchModuleDocAndImportToPostman(moduleName, collectionName, workspaceID string) {
 	fmt.Println("processing module", moduleName)
-
-	apiKey, workspaceID := params.postmanAPIKey, params.postmanWorkspaceID
 
 	apiURL := fmt.Sprintf("https://api.%s.vivalabs-dev.link/v1/internal-docs", moduleName)
 
-	data, err := fetchDoc(apiURL, params.docAPIKey)
+	data, err := c.fetchDoc(apiURL)
 	if err != nil {
 		fmt.Println("fetch doc error", err)
 		return
 	}
 
 	// Check if collection already exists and delete all instances
-	existingIds, err := getCollectionsByName(collectionName, apiKey, workspaceID)
+	existingIds, err := c.getCollectionsByName(collectionName, workspaceID)
 	if err != nil {
 		fmt.Printf("Error checking existing collections: %v\n", err)
 		return
@@ -178,14 +189,14 @@ func FetchModuleDocAndImportToPostman(moduleName, collectionName string, params 
 
 	for _, id := range existingIds {
 		fmt.Printf("Found existing collection %s, deleting...\n", id)
-		err = deleteCollection(id, apiKey)
+		err = c.deleteCollection(id)
 		if err != nil {
 			fmt.Printf("Error deleting collection %s: %v\n", id, err)
 		}
 	}
 
 	// Import to Postman
-	err = importToPostman(data, collectionName, apiKey, workspaceID)
+	err = c.importToPostman(data, collectionName, workspaceID)
 	if err != nil {
 		fmt.Printf("Postman import error: %v\n", err)
 		return
