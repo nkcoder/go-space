@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.RateLimitMain()
+	topics.MutexMain()
 }
