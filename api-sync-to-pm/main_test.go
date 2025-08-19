@@ -2,84 +2,186 @@ package main
 
 import (
 	"os"
+	"os/exec"
+	"strings"
 	"testing"
 
 	"apisync.daniel.guo.com/cmd"
 )
 
-func TestMainFunction_ParameterValidation(t *testing.T) {
+// TestMainFunction tests the main function by running it as a subprocess
+// This is the recommended approach for testing main functions in Go
+func TestMainFunction(t *testing.T) {
 	tests := []struct {
-		name    string
-		envVars map[string]string
-		wantErr bool
+		name     string
+		args     []string
+		wantExit int
+		wantErr  string
 	}{
 		{
-			name: "valid environment variables",
-			envVars: map[string]string{
-				"DOC_API_KEY":     "test-doc-key",
-				"PM_API_KEY":      "test-pm-key", 
-				"PM_WORKSPACE_ID": "test-workspace",
-			},
-			wantErr: false,
+			name:     "missing required flags",
+			args:     []string{},
+			wantExit: 1,
+			wantErr:  "Error:",
 		},
 		{
-			name:    "missing environment variables",
-			envVars: map[string]string{},
-			wantErr: true,
+			name:     "missing doc-api-key",
+			args:     []string{"-pm-api-key=test", "-pm-workspace-id=test"},
+			wantExit: 1,
+			wantErr:  "Error:",
+		},
+		{
+			name:     "missing pm-api-key",
+			args:     []string{"-doc-api-key=test", "-pm-workspace-id=test"},
+			wantExit: 1,
+			wantErr:  "Error:",
+		},
+		{
+			name:     "missing pm-workspace-id",
+			args:     []string{"-doc-api-key=test", "-pm-api-key=test"},
+			wantExit: 1,
+			wantErr:  "Error:",
+		},
+		{
+			name:     "help flag",
+			args:     []string{"-h"},
+			wantExit: 0,
+			wantErr:  "", // Help should not be an error
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Clean environment
-			os.Unsetenv("DOC_API_KEY")
-			os.Unsetenv("PM_API_KEY")
-			os.Unsetenv("PM_WORKSPACE_ID")
-
-			// Set test environment
-			for key, value := range tt.envVars {
-				os.Setenv(key, value)
+			// Build the binary first
+			cmd := exec.Command("go", "build", "-o", "test-binary", ".")
+			if err := cmd.Run(); err != nil {
+				t.Fatalf("Failed to build binary: %v", err)
 			}
+			defer os.Remove("test-binary")
 
-			// Test that we can create a client with the expected parameters
-			if tt.wantErr {
-				// For error cases, verify that the required env vars are missing
-				if os.Getenv("DOC_API_KEY") == "" && 
-				   os.Getenv("PM_API_KEY") == "" && 
-				   os.Getenv("PM_WORKSPACE_ID") == "" {
-					// This is expected - we can't test GetParams() directly due to flag conflicts
-					// but we know it will fail with missing parameters
-					return
+			// Run the binary with test arguments
+			cmd = exec.Command("./test-binary")
+			cmd.Args = append(cmd.Args, tt.args...)
+
+			output, err := cmd.CombinedOutput()
+			outputStr := string(output)
+
+			// Check exit code
+			var exitCode int
+			if err != nil {
+				if exitError, ok := err.(*exec.ExitError); ok {
+					exitCode = exitError.ExitCode()
+				} else {
+					t.Fatalf("Failed to run command: %v", err)
 				}
 			}
 
-			// For success cases, verify that APIClient can be created
-			client := cmd.NewAPIClient(tt.envVars["DOC_API_KEY"], tt.envVars["PM_API_KEY"])
-			if client == nil {
-				t.Error("Expected non-nil APIClient")
+			if exitCode != tt.wantExit {
+				t.Errorf("Expected exit code %d, got %d", tt.wantExit, exitCode)
+			}
+
+			// Check error message (if expected)
+			if tt.wantErr != "" && !strings.Contains(outputStr, tt.wantErr) {
+				t.Errorf("Expected error message containing '%s', got: %s", tt.wantErr, outputStr)
+			}
+
+			// For help flag, verify it shows usage information
+			if tt.name == "help flag" && !strings.Contains(outputStr, "API sync tool") {
+				t.Errorf("Help output should contain usage information, got: %s", outputStr)
 			}
 		})
 	}
 }
 
-func TestModulesConfiguration(t *testing.T) {
-	// Test that the modules map in main.go contains expected entries
-	expectedModules := map[string]string{
-		"members": "Members Module API",
-		"brands":  "Brands Module API",  
-		"classes": "Classes Module API",
+// TestMainIntegration tests the main function with valid parameters
+// This test would require actual API keys to run successfully
+func TestMainIntegration(t *testing.T) {
+	// Skip integration test unless explicitly requested
+	if os.Getenv("RUN_INTEGRATION_TESTS") == "" {
+		t.Skip("Skipping integration test. Set RUN_INTEGRATION_TESTS=1 to run.")
 	}
 
-	// This test verifies the static configuration in main()
-	for module, collection := range expectedModules {
-		if module == "" {
-			t.Error("Module name should not be empty")
+	// Get test credentials from environment
+	docAPIKey := os.Getenv("TEST_DOC_API_KEY")
+	pmAPIKey := os.Getenv("TEST_PM_API_KEY")
+	workspaceID := os.Getenv("TEST_PM_WORKSPACE_ID")
+
+	if docAPIKey == "" || pmAPIKey == "" || workspaceID == "" {
+		t.Skip("Integration test requires TEST_DOC_API_KEY, TEST_PM_API_KEY, and TEST_PM_WORKSPACE_ID environment variables")
+	}
+
+	// Build the binary
+	cmd := exec.Command("go", "build", "-o", "test-binary", ".")
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("Failed to build binary: %v", err)
+	}
+	defer os.Remove("test-binary")
+
+	// Run with valid credentials
+	args := []string{
+		"-doc-api-key=" + docAPIKey,
+		"-pm-api-key=" + pmAPIKey,
+		"-pm-workspace-id=" + workspaceID,
+	}
+
+	cmd = exec.Command("./test-binary")
+	cmd.Args = append(cmd.Args, args...)
+
+	output, err := cmd.CombinedOutput()
+	outputStr := string(output)
+
+	// The actual success depends on API availability, but we can check
+	// that it doesn't fail with parameter parsing errors
+	if err != nil {
+		if exitError, ok := err.(*exec.ExitError); ok {
+			// Exit code 1 might be expected if APIs are unreachable
+			// but the error shouldn't be about missing parameters
+			if exitError.ExitCode() == 1 && strings.Contains(outputStr, "Error:") {
+				if strings.Contains(outputStr, "required") || strings.Contains(outputStr, "flag") {
+					t.Errorf("Should not fail with parameter errors when all flags provided: %s", outputStr)
+				}
+			}
 		}
-		if collection == "" {
-			t.Error("Collection name should not be empty")
-		}
-		if len(collection) < 5 {
-			t.Errorf("Collection name %q seems too short", collection)
-		}
+	}
+
+	t.Logf("Integration test output: %s", outputStr)
+}
+
+// TestMainComponents tests that main function properly initializes components
+func TestMainComponents(t *testing.T) {
+	// This test checks that our main function logic is sound
+	// by testing the component initialization without actually running main()
+
+	// We can't easily test main() directly, but we can test that
+	// the components it creates are properly initialized
+
+	// Test that NewAPIClient works
+	client := cmd.NewAPIClient("test-doc-key", "test-pm-key")
+	if client == nil {
+		t.Error("NewAPIClient should not return nil")
+	}
+
+	// Test that NewModuleConfig works
+	config := cmd.NewModuleConfig()
+	if config == nil {
+		t.Error("NewModuleConfig should not return nil")
+	}
+	if len(config.Modules) == 0 {
+		t.Error("ModuleConfig should have modules configured")
+	}
+
+	// Test that NewSyncOrchestrator works
+	orchestrator := cmd.NewSyncOrchestrator(client, config)
+	if orchestrator == nil {
+		t.Error("NewSyncOrchestrator should not return nil")
+	}
+}
+
+// Benchmark for main components initialization
+func BenchmarkMainComponentsInit(b *testing.B) {
+	for b.Loop() {
+		client := cmd.NewAPIClient("test-doc-key", "test-pm-key")
+		config := cmd.NewModuleConfig()
+		_ = cmd.NewSyncOrchestrator(client, config)
 	}
 }
