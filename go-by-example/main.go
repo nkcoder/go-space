@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	topics.MutexMain()
+	topics.StatefulGoroutineMain()
 }
