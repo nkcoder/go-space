@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	"coral.daniel-guo.com/internal/config"
-	"coral.daniel-guo.com/internal/email"
-	"coral.daniel-guo.com/internal/model"
-	"coral.daniel-guo.com/internal/secrets"
+	"cb.daniel-guo.com/internal/config"
+	"cb.daniel-guo.com/internal/email"
+	"cb.daniel-guo.com/internal/model"
+	"cb.daniel-guo.com/internal/secrets"
 )
 
 // CreateTempDir creates a temporary directory for testing

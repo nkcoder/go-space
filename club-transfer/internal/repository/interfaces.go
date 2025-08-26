@@ -4,7 +4,7 @@ package repository
 import (
 	"context"
 
-	"coral.daniel-guo.com/internal/model"
+	"cb.daniel-guo.com/internal/model"
 	"github.com/jackc/pgx/v5"
 )
 

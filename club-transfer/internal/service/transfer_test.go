@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"coral.daniel-guo.com/internal/config"
-	"coral.daniel-guo.com/internal/model"
+	"cb.daniel-guo.com/internal/config"
+	"cb.daniel-guo.com/internal/model"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/suite"

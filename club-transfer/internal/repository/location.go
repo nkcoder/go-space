@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"coral.daniel-guo.com/internal/model"
+	"cb.daniel-guo.com/internal/model"
 )
 
 // LocationRepository provides data access for locations

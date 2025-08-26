@@ -1,13 +1,13 @@
+// Package secrets is to fetch secrets from AWS
 package secrets
 
 import (
 	"fmt"
 
-	"coral.daniel-guo.com/internal/logger"
+	"cb.daniel-guo.com/internal/logger"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/secretsmanager"
 )
-
 
 func NewManager(
 	config Config,

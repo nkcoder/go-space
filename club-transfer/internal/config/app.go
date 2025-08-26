@@ -2,8 +2,8 @@
 package config
 
 import (
-	"coral.daniel-guo.com/internal/email"
-	"coral.daniel-guo.com/internal/secrets"
+	"cb.daniel-guo.com/internal/email"
+	"cb.daniel-guo.com/internal/secrets"
 )
 
 // AppConfig holds the application configuration

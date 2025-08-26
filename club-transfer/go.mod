@@ -1,4 +1,4 @@
-module coral.daniel-guo.com
+module cb.daniel-guo.com
 
 go 1.25
 

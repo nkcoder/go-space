@@ -1,31 +1,13 @@
 # Projects
 
-## go-by-example
-
-Walk through [Go by Example](https://gobyexample.com/).
-
-## effective-go
-
-Walk through of [Effective Go](https://go.dev/doc/effective_go).
-
-## go-concurrency
-
-Walk through the course [Working with Concurrency in Go](https://www.udemy.com/course/working-with-concurrency-in-go-golang/learn/lecture/32129684?start=15#overview)
-
----
-
 ## aws-go
 
 - create-readonly-user: create a readonly user (and group if not exist) in AWS, using pulumi with go.
 
-## coral
+## api-sync-to-pm
 
-Read CSV input files, process, then send emails concurrently using AWS SES.
+A simple CLI application to download OpenAPI docs (JSON) and write to Postman API collections.
 
-# Go Resources
+## club-transfer
 
-- A tour of Go
-- Go by example
-- Effective Go
-- Let's Go
-- Let's Go further
+A Cobra CLI application to read CSV input files, process, then send emails concurrently using AWS SES.

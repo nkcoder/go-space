@@ -1,11 +1,11 @@
 # https://taskfile.dev
 
-version: '3'
+version: "3"
 
 vars:
   ENV: dev
   AWS_PROFILE: dev
-  TEST_EMAIL: "nkcoder.24@proton.me"
+  TEST_EMAIL: "daniel.testing@yopmail.com"
   SENDER: no-reply@the-hub.ai
   PIF_INPUT: data/pif_club_transfer.csv
   DD_INPUT: data/dd_club_transfer.csv
@@ -15,12 +15,12 @@ tasks:
   build:linux:
     desc: Build for Linux
     cmds:
-      - GOOS=linux GOARCH=arm64 go build -o email-app .
+      - GOOS=linux GOARCH=arm64 go build -o cb-app .
 
   build:mac:
     desc: Build for Mac
     cmds:
-      - GOOS=darwin GOARCH=arm64 go build -o email-app .
+      - GOOS=darwin GOARCH=arm64 go build -o cb-app .
 
   # Testing tasks
   test:
@@ -86,7 +86,7 @@ tasks:
   clean:
     desc: Clean build artifacts and test files
     cmds:
-      - rm -f email-app email-app-linux email-app.exe
+      - rm -f cb-app email-app-linux email-app.exe
       - rm -f coverage.out coverage.html
       - go clean -testcache
 
@@ -106,8 +106,8 @@ tasks:
     deps:
       - docker:build
     cmds:
-      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}}) 
-      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}}) 
+      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}})
+      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}})
       - |
         if [ -n "{{.TEST_EMAIL}}" ]; then
           docker-compose run --rm app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
@@ -120,8 +120,8 @@ tasks:
     deps:
       - docker:build
     cmds:
-      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}}) 
-      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}}) 
+      - export AWS_ACCESS_KEY_ID=$(aws configure get aws_access_key_id --profile {{.AWS_PROFILE}})
+      - export AWS_SECRET_ACCESS_KEY=$(aws configure get aws_secret_access_key --profile {{.AWS_PROFILE}})
       - |
         if [ -n "{{.TEST_EMAIL}}" ]; then
           docker-compose run --rm app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
@@ -143,11 +143,11 @@ tasks:
     cmds:
       - |
         if [ -n "{{.TEST_EMAIL}}" ]; then
-          ./email-app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
+          ./cb-app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
         else
-          ./email-app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v
+          ./cb-app send-email -e {{.ENV}} -t PIF -i {{.PIF_INPUT}} -s {{.SENDER}} -v
         fi
-    silent: false
+    silent: true
 
   send-email-dd:
     desc: Send DD club transfer emails
@@ -156,13 +156,13 @@ tasks:
     cmds:
       - |
         if [ -n "{{.TEST_EMAIL}}" ]; then
-          ./email-app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
+          ./cb-app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v --test-email "{{.TEST_EMAIL}}"
         else
-          ./email-app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v
+          ./cb-app send-email -e {{.ENV}} -t DD -i {{.DD_INPUT}} -s {{.SENDER}} -v
         fi
-    silent: false
+    silent: true
 
   help:
     desc: Display available commands
     cmds:
-      - ./email-app --help
+      - ./cb-app --help

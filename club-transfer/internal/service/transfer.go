@@ -1,4 +1,4 @@
-// Package transfer provides club transfer functionality
+// Package service provides club transfer functionality
 package service
 
 import (
@@ -7,13 +7,13 @@ import (
 	"sync"
 	"time"
 
-	"coral.daniel-guo.com/internal/config"
-	"coral.daniel-guo.com/internal/csvutil"
-	"coral.daniel-guo.com/internal/email"
-	"coral.daniel-guo.com/internal/logger"
-	"coral.daniel-guo.com/internal/model"
-	"coral.daniel-guo.com/internal/repository"
-	"coral.daniel-guo.com/internal/secrets"
+	"cb.daniel-guo.com/internal/config"
+	"cb.daniel-guo.com/internal/csvutil"
+	"cb.daniel-guo.com/internal/email"
+	"cb.daniel-guo.com/internal/logger"
+	"cb.daniel-guo.com/internal/model"
+	"cb.daniel-guo.com/internal/repository"
+	"cb.daniel-guo.com/internal/secrets"
 )
 
 // Service handles club transfer operations

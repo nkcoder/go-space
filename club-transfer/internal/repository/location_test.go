@@ -6,7 +6,7 @@ import (
 	"errors"
 	"testing"
 
-	"coral.daniel-guo.com/internal/model"
+	"cb.daniel-guo.com/internal/model"
 	"github.com/jackc/pgx/v5"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"

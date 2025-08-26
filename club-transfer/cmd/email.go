@@ -3,9 +3,9 @@ package cmd
 import (
 	"os"
 
-	"coral.daniel-guo.com/internal/config"
-	"coral.daniel-guo.com/internal/logger"
-	"coral.daniel-guo.com/internal/service"
+	"cb.daniel-guo.com/internal/config"
+	"cb.daniel-guo.com/internal/logger"
+	"cb.daniel-guo.com/internal/service"
 	"github.com/spf13/cobra"
 )
 

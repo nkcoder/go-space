@@ -9,4 +9,15 @@ services:
     volumes:
       - ./data:/app/data:ro
     working_dir: /app
-    command: ['send-email', '-e', 'dev', '-t', 'PIF', '-i', '/app/data/pif_club_transfer.csv', '-s', 'no-reply@the-hub.ai']
+    command:
+      [
+        "send-email",
+        "-e",
+        "dev",
+        "-t",
+        "PIF",
+        "-i",
+        "/app/data/pif_club_transfer.csv",
+        "-s",
+        "no-reply@the-hub.ai",
+      ]

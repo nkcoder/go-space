@@ -3,8 +3,8 @@ package config
 import (
 	"testing"
 
-	"coral.daniel-guo.com/internal/email"
-	"coral.daniel-guo.com/internal/secrets"
+	"cb.daniel-guo.com/internal/email"
+	"cb.daniel-guo.com/internal/secrets"
 )
 
 func TestNewAppConfig(t *testing.T) {
@@ -195,13 +195,13 @@ func TestAppConfig_StructFields(t *testing.T) {
 	config := NewAppConfig("test", "test@example.com", "test@sender.com")
 
 	// Verify field types and accessibility
-	var _ = config.Environment
-	var _ = config.Email
-	var _ = config.Secrets
-	var _ = config.DefaultSender
-	var _ = config.TestEmail
-	var _ = config.WorkerPoolSize
-	var _ = config.WorkerDelayMs
+	_ = config.Environment
+	_ = config.Email
+	_ = config.Secrets
+	_ = config.DefaultSender
+	_ = config.TestEmail
+	_ = config.WorkerPoolSize
+	_ = config.WorkerDelayMs
 
 	// This test ensures that if struct fields change, the test will break
 	// and force us to update the tests accordingly

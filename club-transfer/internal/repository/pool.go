@@ -6,8 +6,8 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"coral.daniel-guo.com/internal/logger"
-	"coral.daniel-guo.com/internal/secrets"
+	"cb.daniel-guo.com/internal/logger"
+	"cb.daniel-guo.com/internal/secrets"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 )

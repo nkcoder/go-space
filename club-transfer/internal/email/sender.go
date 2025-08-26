@@ -11,7 +11,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"coral.daniel-guo.com/internal/logger"
+	"cb.daniel-guo.com/internal/logger"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ses"

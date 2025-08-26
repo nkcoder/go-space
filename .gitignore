@@ -10,8 +10,10 @@ db-data
 .vscode
 */coverage*
 
+club-transfer/cb-app
+
 
 ## References
 references/*
 
-coral/email-app
+

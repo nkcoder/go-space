@@ -8,7 +8,7 @@ import (
 	"os"
 	"strings"
 
-	"coral.daniel-guo.com/internal/model"
+	"cb.daniel-guo.com/internal/model"
 )
 
 // ReadClubTransferCSV reads a CSV file with club transfer data
