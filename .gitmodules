@@ -1,0 +1,12 @@
+[submodule "club-transfer"]
+	path = club-transfer
+	url = git@github.com:nkcoder/club-transfer.git
+[submodule "go-by-example"]
+	path = go-by-example
+	url = git@github.com:nkcoder/go-by-example.git
+[submodule "aws_go"]
+	path = aws_go
+	url = git@github.com:nkcoder/aws_go.git
+[submodule "api-sync-to-pm"]
+	path = api-sync-to-pm
+	url = git@github.com:nkcoder/api-sync-to-pm.git
